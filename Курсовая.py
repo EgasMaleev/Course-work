@@ -3,32 +3,31 @@ import requests
 from pprint import pprint
 Yandex_token = 'AQAAAABM9tR2AADLW4FNSpmMiEJ8qiX2_dNy4RY'
 id = 259092763
-TOKEN = '07c27c4e128c04e197448f1a8c2a043813f9e8b58f2d67bd525a0ea8eee16149874cc01772df62097d39b'
+TOKEN = '4b7cac1e4ac6d9beaf0802fae2ff0c43563ff8d22b24792738be57290a5df4b64e8559fa50ec41d361586'
 URL = 'https://api.vk.com/method/photos.getAll'
+offset = 0
 class VK_USER:
     def __init__(self, Yandex_token, id):
         self.Yandex_token = Yandex_token
         self.id = id
-    def info_photo(self, URL):
+    def info_photo(self, URL, offset):
         params = {
             'access_token' : TOKEN,
             'owner_id' : id,
             'album_id' : 'profile',
-            'count' : '10',
+            'count' : '1',
             'v' : '5.131',
             'extended' : '1',
-            # 'offset' : offset
+            'offset' : offset
         }
         resp = requests.get(URL, params).json()['response']
-        count_photo = resp['count']
         response = resp['items']
         return response
-    def save_photo_album(self):
-        req = Egor.info_photo(URL)
-        # num = 0
+    def save_photo_album(self, offset):
+        req = Egor.info_photo(URL, offset=offset)
+        num = 0
         for el in req:
             # num += 1
-            # if num == 200:
             date = el['date']
             count = 0
             for i in el['sizes']:
@@ -57,5 +56,18 @@ class VK_USER:
             resp = requests.post(url=URL_upload, params=params, headers=headers)
             print(resp.json)
 Egor = VK_USER(Yandex_token, id)
-pprint(Egor.info_photo(URL))
-Egor.save_photo_album()
+count_photo = 41
+params = {
+    'access_token': TOKEN,
+    'owner_id': id,
+    'album_id': 'profile',
+    'count': '1',
+    'v': '5.131',
+    'extended': '1',
+    'offset': offset
+}
+count_photo = requests.get(URL, params).json()['response']['count']
+while offset < count_photo:
+    offset += 1
+    pprint(Egor.info_photo(URL, offset=offset))
+    Egor.save_photo_album(offset=offset)
