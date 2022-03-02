@@ -1,9 +1,7 @@
-import os
 import requests
-from pprint import pprint
 Yandex_token = 'AQAAAABM9tR2AADLW4FNSpmMiEJ8qiX2_dNy4RY'
 id = 259092763
-TOKEN = '4b7cac1e4ac6d9beaf0802fae2ff0c43563ff8d22b24792738be57290a5df4b64e8559fa50ec41d361586'
+TOKEN = 'e2e665ca9b8d33cc060110dbec31e4291339110bb564f67076332d40f2cd9ea184ddac2d8369c40fb07f0'
 URL = 'https://api.vk.com/method/photos.getAll'
 offset = 0
 class VK_USER:
@@ -25,9 +23,7 @@ class VK_USER:
         return response
     def save_photo_album(self, offset):
         req = Egor.info_photo(URL, offset=offset)
-        num = 0
         for el in req:
-            # num += 1
             date = el['date']
             count = 0
             for i in el['sizes']:
@@ -37,11 +33,7 @@ class VK_USER:
                     break
             url = el['sizes'][count]['url']
             like = el['likes']['count']
-            path = r'''C:\Users\Егор\Desktop\Курсовая\photo'''
             file_name = str(like) + '_' + str(date) + '.jpg'
-            full_path = os.path.join(path, file_name)
-            print(full_path)
-            print(file_name)
             list = []
             dict = {}
             dict["filename"] = file_name
@@ -54,9 +46,8 @@ class VK_USER:
                 'Authorization': 'OAuth {}'.format(Yandex_token)
             }
             resp = requests.post(url=URL_upload, params=params, headers=headers)
-            print(resp.json)
 Egor = VK_USER(Yandex_token, id)
-count_photo = 41
+count_photo = 5
 params = {
     'access_token': TOKEN,
     'owner_id': id,
@@ -66,8 +57,15 @@ params = {
     'extended': '1',
     'offset': offset
 }
-count_photo = requests.get(URL, params).json()['response']['count']
-while offset < count_photo:
+# count_photo = requests.get(URL, params).json()['response']['count']
+count_photo=input('Введите число фотографий, которое вы хотите сохранить. '
+                  'Если хотите сохранить все фото - напишите "Все"'
+                  ' По умолчанию программа сохраняет 5 фото.')
+if count_photo == 'Все':
+    count_photo = requests.get(URL, params).json()['response']['count']
+else:
+    count_photo = int(count_photo)
+from tqdm import tqdm
+for i in tqdm(range(count_photo + 1)):
     offset += 1
-    pprint(Egor.info_photo(URL, offset=offset))
     Egor.save_photo_album(offset=offset)
