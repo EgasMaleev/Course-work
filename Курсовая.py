@@ -1,6 +1,6 @@
 import requests
 Yandex_token = 'AQAAAABM9tR2AADLW4FNSpmMiEJ8qiX2_dNy4RY'
-id = 259092763
+id = 173671570
 TOKEN = 'e2e665ca9b8d33cc060110dbec31e4291339110bb564f67076332d40f2cd9ea184ddac2d8369c40fb07f0'
 URL = 'https://api.vk.com/method/photos.getAll'
 offset = 0
@@ -33,7 +33,7 @@ class VK_USER:
                     break
             url = el['sizes'][count]['url']
             like = el['likes']['count']
-            file_name = str(like) + '_' + str(date) + '.jpg'
+            file_name = 'photosVK/' + str(like) + '_' + str(date) + '.jpg'
             list = []
             dict = {}
             dict["filename"] = file_name
@@ -66,6 +66,6 @@ if count_photo == 'Все':
 else:
     count_photo = int(count_photo)
 from tqdm import tqdm
-for i in tqdm(range(count_photo + 1)):
+for i in tqdm(range(count_photo)):
     offset += 1
     Egor.save_photo_album(offset=offset)
